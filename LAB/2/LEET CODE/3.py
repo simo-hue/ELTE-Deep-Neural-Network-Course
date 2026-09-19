@@ -1,30 +1,34 @@
-def kidsWithCandies(candies, extraCandies):
-        """
-        :type candies: List[int]
-        :type extraCandies: int
-        :rtype: List[bool]
-        """
-        if(len(candies) < 0):
-            return False
+nums = [1, 5, 3]
+target = 4
+
+def finder_naive(nums, target):
+    for i in range(len(nums)):
+        res = [i,]
+        sum = nums[i]
+        for j in range(i + 1, len(nums), 1):
+            sum += nums[j]
+            res.append(j)
+            
+            if(sum == target):
+                return res
+            elif((len(res) == 2)):
+                sum = nums[i]
+                res = [i,]
+
+
+def finder_pro(nums, target):
+    seen_values = {}
+    res = []
+    for i in range(len(nums)):
+        if nums[i] == target:
+            res.append(i)
         
-        max = candies[0]
-
-        # I found the max element
-        for elem in candies:
-            if(elem > max):
-                max = elem
-
-        # Retur the result
-        res = [False] * len(candies)
+        if((target - nums[i]) in seen_values.keys()):
+            return [seen_values[target - nums[i]], i]
+        else:
+            seen_values[nums[i]] = i
         
-        print(f"Vettore: {res}")
-
-        for i in range(len(candies)):
-            if(candies[i] >= max):
-                res[i] = True
-
-        return res
-    
-rt = kidsWithCandies([2,3,5,1,3], 3)
-
-print(rt)
+    return res
+                
+print(nums)
+print(f"res: {finder_pro(nums, target)}")

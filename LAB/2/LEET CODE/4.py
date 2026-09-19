@@ -1,24 +1,34 @@
-def sortino(nums):
-    x = nums.copy()
-    
-    x.sort()
+class ParkingSystem(object):
 
-    res = [0] * len(x)
+    def __init__(self, big, medium, small):
+        """
+        :type big: int
+        :type medium: int
+        :type small: int
+        """
+        self.big = big
+        self.medium = medium
+        self.small = small
+        
 
-    for i in range(1, (len(x)), 1):
-        if(x[i] > x[i - 1]):
-            res[i] += res[i - 1] + 1
-    
-    final = [0] * len(x)
-    
-    for i in range(len(x)):
-        inds = nums.index(nums[i])
+    def addCar(self, carType):
+        """
+        :type carType: int
+        :rtype: bool
+        """
+        if carType == 1:
+            self.big -= 1
+            return self.big >= 0
+        elif carType == 2:
+            self.medium -= 1
+            return self.medium >= 0
+        elif carType == 3:
+            self.small -= 1
+            return self.small >= 0
+
         
-        
-        final[inds] = res[x.index(nums[i])]
-        
-        print(f"Elemento {nums[i]} ha: {res[inds]} numeri più piccoli")
-        
-    return final
-         
-print(sortino([6,5,4,8]))
+
+
+# Your ParkingSystem object will be instantiated and called as such:
+# obj = ParkingSystem(big, medium, small)
+# param_1 = obj.addCar(carType)
