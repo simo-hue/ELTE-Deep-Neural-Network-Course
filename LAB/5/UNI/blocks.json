@@ -1,0 +1,16 @@
+{
+  "air": 0,
+  "stone": 1,
+  "dirt": 2,
+  "grass": 3,
+  "water": 4,
+  "sand": 5,
+  "wood": 6,
+  "leaves": 7,
+  "coal_ore": 8,
+  "iron_ore": 9,
+  "gold_ore": 10,
+  "diamond_ore": 11,
+  "obsidian": 12,
+  "bedrock": 13
+}
