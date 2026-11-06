@@ -1,13 +1,17 @@
 import numpy as np
 
-import numpy as np
+x = np.arange(50).reshape(5, 10)
+y = np.arange(50).reshape(2, 5, 5)
 
-x = np.arange(3500).reshape(250,14)
+print("x:")
+print(x)
+print()
 
-print(x[1:, :].shape)
+print("y:")
+print(y)
 print()
-print(x[:, 1].shape)
+
+
+print((x[:, :, None, None, None] + y))
 print()
-print()
-print(x[[-1], :].shape)
-print()
+
