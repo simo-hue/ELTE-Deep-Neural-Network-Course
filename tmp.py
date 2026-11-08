@@ -1,13 +1,5 @@
 import numpy as np
 
-import numpy as np
+my_array = np.ones(24).reshape(2, 12, -1)
 
-x = np.arange(3500).reshape(250,14)
-
-print(x[1:, :].shape)
-print()
-print(x[:, 1].shape)
-print()
-print()
-print(x[[-1], :].shape)
-print()
+print(my_array.shape)
