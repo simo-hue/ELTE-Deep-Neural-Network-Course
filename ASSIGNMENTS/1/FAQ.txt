@@ -1,0 +1,61 @@
+Can I use Python loops?
+The Python interpreter is not efficient (as discussed in the practice videos). Therefore, we should aim to solve our tasks using as few Python statements as possible. For example, if we want to classify the elements in a database containing a thousand samples into categories based on the value of a certain variable, a naive solution would be to iterate through the elements using a simple Python loop, examine them one by one according to some condition, and then classify them into specific categories. In this case, the Python interpreter would have to execute several thousand statements. In the naive solution, the loop can of course be replaced with recursion, the `map()` function, and other similar tricks, but even using these, we’d still end up with thousands of Python instructions - we wouldn’t be getting any further.
+
+In contrast, if we solve the same task using NumPy/PyTorch vectorized operations without a Python loop, we only execute a few Python instructions, and our code runs much more efficiently.
+
+The functions np.apply_along_axis(), np.vectorize(), and np.frompyfun() do not result in vectorized solutions! These are essentially just convenience features hiding a simple Python loop, therefore they are not efficient. (Discussed in Practice video 9.)
+
+Cases where Python loops (and similar structures) are NOT acceptable:
+
+When iterating over samples (data points) and the task could easily be solved using NumPy. There could be lots of data points. Although there are only a few hundred in the Homework, but many databases contain millions of entries.
+Cases where Python loops (and similar structures) are acceptable:
+
+When the individual iterations of the loop must follow each other sequentially. Examples include the training loop: iteration by epochs and batches.
+When iterating over only a few samples, for example, to print a few example estimates and true labels.
+When iteration cannot be easily implemented, because the data type cannot be efficiently represented in NumPy. For example, in Task A, a loop is appropriate for parsing the downloaded string and extracting the relevant values from it, or in the final task, for placing text into the cells of the confusion matrix.
+
+---
+
+Multi-class classification in PyTorch
+In the case of multi-class (more than two categories) classification using a neural network, the final layer of our neural network contains as many neurons as there are categories. Each neuron in the final layer should estimate the probability of a single category. Since neurons typically output arbitrary numbers rather than probabilities, we apply the softmax function to the estimates over all categories; this sets the sum of the estimated values to 1, thus returning a probability vector across all categories. For multi-class classification, we use the general cross-entropy (CE) loss.
+
+In PyTorch, the CE loss (torch.nn.CrossEntropyLoss) includes the softmax operation for efficiency and numerical stability reasons, so we do not need to add it at the end of our network. For this reason, if we are no longer using our network with the loss function - for example, if we only want to make predictions and are interested in categorical probabilities - we must apply the softmax function to the predictions. However, this is not necessary to obtain the most likely category: it is sufficient to apply torch.argmax() to the values estimated by the last neural layer, since the highest probability will correspond to the largest of these values after applying the softmax.
+
+---
+
+Can I import and use other packages?
+
+Yes, you can, but it’s best to stick to those that will also be available during the Coding test. A list of these can be found in the requirements.txt file posted in the "Week 1" module of the course Moodle page. (The built-in Python modules will, of course, also be available...)
+
+---
+
+Network training - the loss value looks good, but the plot shows that the loss is not improving, the curve is almost flat. What's the problem?
+It’s a simple mistake, but one that’s easy to overlook. If we run the code block containing the network training multiple times, the network’s state is preserved, since the weights are initialized randomly when an instance of our neural network class (a subclass of `nn.Module`) is created (if we create the network layers in the constructor). That is, before the second run of the block containing the training loop, the network has likely already learned, and on the second run, the loss is unlikely to improve further: we see a plot of this.
+---
+
+---
+
+What level of accuracy can be expected from the trained networks?
+If we look at the database, the meaning of the variables, and the information included in the input and the label, it is clear that the regression task is easier. The database contains three third-term grades of Portuguese students (the three grades are labeled G1, G2, and G3 in the header) . These grades are strongly correlated. In the regression task, only the end-of-year grade (G3) needs to be estimated, and the other two midterm grades are also included in the input, so the network will have a much easier job here. An example of a training/validation curve and some true and estimated labels from the test set:
+
+Training and validation losses are reduced drastically in the first 20 epochs, then they stabilize between a MSE of 1 and 2.
+
+The MSE loss measured on the test set is around 1-2, which means that for grades on a 20-point scale, the absolute error of the estimate is on average around 1 and 1.4. The curves above suggest that the network begins to overfit relatively quickly.
+
+In the classification task, however, G1 and G2 are not included in the input, so we must estimate grades based solely on the variables describing the students’ socioeconomic status. We can expect results similar to the following:
+
+Training loss keeps reducing, while validation loss stabilizes around 1 after 60 epochs. Accuracy curves accordingly.
+
+A 3-by-3 confusion matrix with elements in row-major order: 28, 9, 1, 12, 10, 11, 1, 3, 24.
+
+The accuracy measured on the test dataset is expected to be around 55–65%. With a bit of luck, it might be slightly better. Since the database isn’t large - it consists of barely 400 samples - even our small neural network can very easily overfit.
+
+What can I do if I don’t achieve the results expected by the test script?
+
+First, you need to make sure that the batches generated by the data iterators are suitable for the task and are actually drawing rows from the appropriate subsets of the database. The labels (whether regression or categorical) must be appropriate for the task, and no variables should be lost along the way.
+
+During training, it’s worth paying attention to the learning rate: if it’s too high, the loss will not converge. If it’s too low, the network will learn very slowly. If the batch size is small, it makes sense to reduce the learning rate as well, since the parameter updates calculated from the batches will be less accurate in this case (see Lecture 5 or 6) - or, of course, you can increase the batch size. A batch size of 32 or 64 can be a good starting point in this case. For regression tasks, it’s still feasible to manually experiment to find the ideal number of epochs, but for classification, the early stopping technique will be necessary. In the case of early stopping, we can adjust the "patience" hyperparameter. For example: how many epochs should we wait after the validation loss stops decreasing before we stop training? In the case of early stopping, it is important to save and restore the weights with the best validation loss from earlier.
+
+What can be done if the results are too good and the test script therefore rejects them?
+
+In such cases, we might suspect data leakage between the training, validation, and test sets, or perhaps we accidentally mistyped variables somewhere and are measuring the "test error" on the training set instead of the test set. It’s also possible that we accidentally included the label among the input variables.

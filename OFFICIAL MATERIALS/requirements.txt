@@ -1,0 +1,26 @@
+#
+# Step 1:
+#     Install a Python environment! We'll be working with version 3.14.7 this semester.
+#     For installation instructions, see the page titled “Development Environment Setup Guide (PDF)” in the "Week 1" module of the course on the Moodle page, along with the video there.
+#     The video shows older versions of Python and its packages, but the steps are the same now. Use this requirements.txt file!
+#
+# Step 2:
+#     If you are using pip, then execute
+#         pip install -r requirements.txt
+#
+#     otherwise, if you are using conda, execute
+#         conda create -n dnd_env python=3.14.7
+#         conda activate dnd_env
+#         pip install -r requirements.txt
+#
+
+matplotlib==3.11.1
+numpy==2.5.2
+pandas==3.0.5
+scikit-image==0.26.0
+scikit-learn==1.9.0
+scipy==1.18.1
+torch==2.13.0
+torchvision==0.28.0
+notebook
+jupyterlab
